@@ -5,7 +5,7 @@ import pandas as pd
 DOMAIN = "www.datos.gov.co"
 DATASET_IDENTIFIER = "qhpu-8ixx"
 LIMIT = 1000
-APP_TOKEN = "tu_app_token_aqui"  # Reemplaza con tu App Token
+APP_TOKEN = "9TQ0tB29FISsC5B3kXlEllXET"  # Reemplaza con tu App Token
 
 def fetch_all_data(domain, dataset_identifier, limit=1000, app_token=None):
     client = Socrata(domain, app_token, timeout=60)
