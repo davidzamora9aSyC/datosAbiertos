@@ -1,17 +1,35 @@
-import requests
-import socket
+import pandas as pd
+from sodapy import Socrata
 
-# Fuerza el uso de IPv4
-original_getaddrinfo = socket.getaddrinfo
+# Configuración
+DOMAIN = "www.datos.gov.co"
+DATASET_IDENTIFIER = "qhpu-8ixx"
+LIMIT = 1000  # Número máximo de registros por consulta
 
-def getaddrinfo_ipv4(host, port, *args, **kwargs):
-    return original_getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM, *args, **kwargs)
+def fetch_all_data(domain, dataset_identifier, limit=1000):
+    client = Socrata(domain, None)  # Cliente no autenticado
+    offset = 0
+    all_results = []
 
-socket.getaddrinfo = getaddrinfo_ipv4
+    while True:
+        results = client.get(dataset_identifier, limit=limit, offset=offset)
+        if not results:
+            break
 
-try:
-    response = requests.get("https://www.datos.gov.co/resource/qhpu-8ixx.json")
-    print("Status code:", response.status_code)
-    print("Response:", response.text[:100])  # Muestra los primeros 100 caracteres
-except requests.exceptions.RequestException as e:
-    print("Error:", e)
+        all_results.extend(results)
+        offset += limit
+
+    return pd.DataFrame.from_records(all_results)
+
+def main():
+    print("Fetching data...")
+    data = fetch_all_data(DOMAIN, DATASET_IDENTIFIER, LIMIT)
+    print(f"Fetched {len(data)} records.")
+
+    # Guarda los datos en un archivo CSV
+    output_file = "rentabilidades_fic.csv"
+    data.to_csv(output_file, index=False)
+    print(f"Data saved to {output_file}")
+
+if __name__ == "__main__":
+    main()
