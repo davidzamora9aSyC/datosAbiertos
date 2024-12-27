@@ -1,13 +1,14 @@
-import pandas as pd
 from sodapy import Socrata
+import pandas as pd
 
 # Configuración
 DOMAIN = "www.datos.gov.co"
 DATASET_IDENTIFIER = "qhpu-8ixx"
-LIMIT = 1000  # Número máximo de registros por consulta
+LIMIT = 1000
+APP_TOKEN = "9TQ0tB29FISsC5B3kXlEllXET"  # Reemplaza con tu App Token
 
-def fetch_all_data(domain, dataset_identifier, limit=1000):
-    client = Socrata(domain, None)  # Cliente no autenticado
+def fetch_all_data(domain, dataset_identifier, limit=1000, app_token=None):
+    client = Socrata(domain, app_token, timeout=60)
     offset = 0
     all_results = []
 
@@ -23,7 +24,7 @@ def fetch_all_data(domain, dataset_identifier, limit=1000):
 
 def main():
     print("Fetching data...")
-    data = fetch_all_data(DOMAIN, DATASET_IDENTIFIER, LIMIT)
+    data = fetch_all_data(DOMAIN, DATASET_IDENTIFIER, LIMIT, APP_TOKEN)
     print(f"Fetched {len(data)} records.")
 
     # Guarda los datos en un archivo CSV
