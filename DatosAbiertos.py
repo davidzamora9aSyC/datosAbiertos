@@ -4,8 +4,8 @@ import socket
 # Fuerza el uso de IPv4
 original_getaddrinfo = socket.getaddrinfo
 
-def getaddrinfo_ipv4(*args, **kwargs):
-    return original_getaddrinfo(*args, family=socket.AF_INET, **kwargs)
+def getaddrinfo_ipv4(host, port, *args, **kwargs):
+    return original_getaddrinfo(host, port, socket.AF_INET, socket.SOCK_STREAM, *args, **kwargs)
 
 socket.getaddrinfo = getaddrinfo_ipv4
 
@@ -15,4 +15,3 @@ try:
     print("Response:", response.text[:100])  # Muestra los primeros 100 caracteres
 except requests.exceptions.RequestException as e:
     print("Error:", e)
- 
